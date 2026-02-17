@@ -1,73 +1,70 @@
-# React + TypeScript + Vite
+# Active Recall
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+間隔反復学習を活用したフラッシュカードアプリケーション。SM-2アルゴリズムに基づいた最適な復習スケジューリングで、効率的な記憶定着をサポートします。
 
-Currently, two official plugins are available:
+## 主な機能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **スマートな間隔反復**: SM-2アルゴリズムの改良版を使用し、3段階評価（忘れた・難しい・良い）で最適な復習タイミングを自動計算
+- **多様なカードタイプ**: テキスト、コードスニペット、画像、多肢選択式に対応
+- **学習統計**: 学習進捗、習熟度分布、評価履歴をグラフで可視化
+- **デッキ管理**: カテゴリ別にフラッシュカードを整理
+- **ローカルストレージ**: すべてのデータをブラウザに保存（サーバー不要）
+- **ライト/ダークテーマ**: お好みのテーマで学習可能
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 開発環境のセットアップ
 
-## Expanding the ESLint configuration
+```bash
+# 依存関係のインストール
+npm install
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# 開発サーバーを起動
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+ブラウザで `http://localhost:5173` にアクセスしてください。
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### ビルド
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# 本番ビルド
+npm run build
+
+# ビルドのプレビュー
+npm run preview
 ```
+
+### その他のコマンド
+
+```bash
+# ESLintでコードチェック
+npm run lint
+```
+
+## 技術スタック
+
+- **フロントエンド**: React 19, TypeScript
+- **ビルドツール**: Vite
+- **ルーティング**: React Router v7
+- **スタイリング**: CSS（カスタムプロパティによるテーマ対応）
+- **UI**: lucide-react（アイコン）、recharts（グラフ）
+- **状態管理**: React Context + useReducer
+
+## プロジェクト構造
+
+```
+src/
+├── pages/          # ページコンポーネント（Decks, DeckDetail, Study, Stats）
+├── store/          # React Context による状態管理
+├── types/          # TypeScript型定義
+├── utils/          # ユーティリティ関数
+│   ├── spaced-repetition.ts  # SM-2アルゴリズム実装
+│   ├── storage.ts            # localStorage操作
+│   └── seed.ts               # 初期データ生成
+└── App.tsx         # メインアプリケーション
+```
+
+## ライセンス
+
+This project is private and not licensed for public use.
