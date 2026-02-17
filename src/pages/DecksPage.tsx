@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, Play, Pencil, Trash2 } from 'lucide-react';
 import { useAppContext } from '../store/AppContext';
 import { getDueCards } from '../utils/spaced-repetition';
-import { Deck } from '../types';
+import type { Deck } from '../types';
 
 function DeckModal({ deck, onClose, onSave }: {
   deck: Deck | null;

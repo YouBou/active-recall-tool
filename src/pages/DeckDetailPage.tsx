@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Play, Pencil, Trash2, Code, Type, Image, ListChecks, Eye } from 'lucide-react';
 import { useAppContext } from '../store/AppContext';
 import { getDueCards, getMasteryLevel } from '../utils/spaced-repetition';
-import { Card, CardType, MultipleChoiceOption } from '../types';
+import type { Card, CardType, MultipleChoiceOption } from '../types';
 import { generateId } from '../utils/id';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';

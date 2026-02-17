@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Check } from 'lucide-react';
 import { useAppContext } from '../store/AppContext';
 import { getDueCards } from '../utils/spaced-repetition';
-import { Card, Rating, StudySession } from '../types';
+import type { Card, Rating, StudySession } from '../types';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';

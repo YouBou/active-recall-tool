@@ -1,5 +1,6 @@
-import { createContext, useContext, useReducer, useEffect, ReactNode, useCallback } from 'react';
-import { AppData, Card, Deck, StudySession, Rating } from '../types';
+import { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
+import type { ReactNode } from 'react';
+import type { AppData, Card, Deck, StudySession, Rating } from '../types';
 import { loadData, saveData } from '../utils/storage';
 import { calculateNextReview } from '../utils/spaced-repetition';
 import { generateId } from '../utils/id';

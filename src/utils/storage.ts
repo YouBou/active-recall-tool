@@ -1,4 +1,4 @@
-import { AppData } from '../types';
+import type { AppData } from '../types';
 import { generateSeedData } from './seed';
 
 const STORAGE_KEY = 'active-recall-data';

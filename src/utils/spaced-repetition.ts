@@ -1,4 +1,4 @@
-import { Card, Rating } from '../types';
+import type { Card, Rating } from '../types';
 
 /**
  * SM-2 based spaced repetition algorithm with 3-level rating.
