@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Play, Pencil, Trash2, Code, Type, Image, ListChecks, Eye } from 'lucide-react';
 import { useAppContext } from '../store/AppContext';
@@ -55,10 +55,29 @@ function CardFormModal({ card, deckId, onClose, onSave }: {
     ]
   );
   const [showPreview, setShowPreview] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    setError('');
+  }, [type]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     if (!front.trim()) return;
+
+    // Validate multiple-choice cards
+    if (type === 'multiple-choice') {
+      const validOptions = options.filter((o) => o.text.trim());
+      if (validOptions.length < 2) {
+        setError('選択肢は少なくとも2つ必要です');
+        return;
+      }
+      if (!validOptions.some((o) => o.isCorrect)) {
+        setError('少なくとも1つの正解を設定してください');
+        return;
+      }
+    }
 
     const cardData = {
       ...(card || {}),
@@ -197,6 +216,12 @@ function CardFormModal({ card, deckId, onClose, onSave }: {
               <div className="form-group">
                 <label>解答面{type === 'code' ? '（コード）' : '（マークダウン対応）'}</label>
                 <textarea value={back} onChange={(e) => setBack(e.target.value)} placeholder="解答を入力..." rows={4} style={type === 'code' ? { fontFamily: 'monospace' } : {}} />
+              </div>
+            )}
+
+            {error && (
+              <div style={{ padding: '12px', background: 'var(--error)', color: 'white', borderRadius: 'var(--radius-sm)', marginTop: '16px', fontSize: '14px' }}>
+                {error}
               </div>
             )}
 
