@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Check } from 'lucide-react';
 import { useAppContext } from '../store/AppContext';
@@ -87,16 +87,28 @@ export default function StudyPage() {
   const [session, setSession] = useState<StudySession | null>(null);
   const [studiedIds, setStudiedIds] = useState<Set<string>>(new Set());
   const [ratings, setRatings] = useState({ forgot: 0, hard: 0, good: 0 });
+  const [sessionCardIds, setSessionCardIds] = useState<string[]>([]);
 
-  const totalCards = dueCards.length;
-  const currentCard: Card | undefined = dueCards[currentIndex];
+  // Frozen snapshot of cards for this session to prevent skipping due to re-computation
+  const activeCards = useMemo(
+    () => (sessionCardIds.length > 0
+      ? sessionCardIds.map((id) => data.cards.find((c) => c.id === id)).filter(Boolean) as Card[]
+      : dueCards),
+    [sessionCardIds, data.cards, dueCards]
+  );
+
+  const totalCards = activeCards.length;
+  const currentCard: Card | undefined = activeCards[currentIndex];
   const isComplete = currentIndex >= totalCards;
 
-  // Start session on first render
-  if (!session && deckId && totalCards > 0) {
-    const s = startSession(deckId);
-    setSession(s);
-  }
+  // Start session on first render using useEffect to avoid setState during render
+  useEffect(() => {
+    if (!session && deckId && dueCards.length > 0) {
+      const s = startSession(deckId);
+      setSession(s);
+      setSessionCardIds(dueCards.map((c) => c.id));
+    }
+  }, [session, deckId, dueCards, startSession]);
 
   const handleRate = useCallback((rating: Rating) => {
     if (!currentCard) return;

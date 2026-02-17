@@ -3,11 +3,17 @@ import { generateSeedData } from './seed';
 
 const STORAGE_KEY = 'active-recall-data';
 
+function isValidAppData(value: unknown): value is AppData {
+  const v = value as AppData;
+  return !!v && Array.isArray(v.decks) && Array.isArray(v.cards) && Array.isArray(v.sessions);
+}
+
 export function loadData(): AppData {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      return JSON.parse(raw) as AppData;
+      const parsed = JSON.parse(raw);
+      if (isValidAppData(parsed)) return parsed;
     }
   } catch {
     // corrupted data, reset
@@ -26,8 +32,8 @@ export function exportData(): string {
 }
 
 export function importData(json: string): AppData {
-  const data = JSON.parse(json) as AppData;
-  if (!data.decks || !data.cards || !data.sessions) {
+  const data = JSON.parse(json);
+  if (!isValidAppData(data)) {
     throw new Error('Invalid data format');
   }
   saveData(data);

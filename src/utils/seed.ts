@@ -3,8 +3,6 @@ import { generateId } from './id';
 
 export function generateSeedData(): AppData {
   const now = new Date().toISOString();
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
 
   const deck1Id = generateId();
   const deck2Id = generateId();

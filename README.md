@@ -53,7 +53,7 @@ npm run lint
 
 ## プロジェクト構造
 
-```
+```text
 src/
 ├── pages/          # ページコンポーネント（Decks, DeckDetail, Study, Stats）
 ├── store/          # React Context による状態管理

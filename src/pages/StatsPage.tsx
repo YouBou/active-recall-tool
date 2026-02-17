@@ -38,15 +38,18 @@ export default function StatsPage() {
     }));
   }, [data.cards]);
 
+  const toDateKey = (d: Date) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
   // Daily study data (last 7 days)
   const dailyData = useMemo(() => {
     const days: { date: string; cards: number }[] = [];
     for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
-      const dateStr = d.toISOString().split('T')[0];
+      const dateStr = toDateKey(d);
       const label = `${d.getMonth() + 1}/${d.getDate()}`;
-      const sessionsOnDay = data.sessions.filter((s) => s.startedAt.split('T')[0] === dateStr);
+      const sessionsOnDay = data.sessions.filter((s) => toDateKey(new Date(s.startedAt)) === dateStr);
       const cardsStudied = sessionsOnDay.reduce((sum, s) => sum + s.cardsStudied, 0);
       days.push({ date: label, cards: cardsStudied });
     }
@@ -60,8 +63,8 @@ export default function StatsPage() {
     for (let i = 0; i < 365; i++) {
       const d = new Date(today);
       d.setDate(d.getDate() - i);
-      const dateStr = d.toISOString().split('T')[0];
-      const hasSession = data.sessions.some((s) => s.startedAt.split('T')[0] === dateStr);
+      const dateStr = toDateKey(d);
+      const hasSession = data.sessions.some((s) => toDateKey(new Date(s.startedAt)) === dateStr);
       if (hasSession) {
         count++;
       } else if (i > 0) {
