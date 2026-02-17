@@ -376,7 +376,7 @@ a {
   font-size: 18px;
   text-align: center;
   width: 100%;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .flashcard-content pre {
