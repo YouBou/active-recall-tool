@@ -24,5 +24,4 @@ dist-ssr
 *.sw?
 
 # Claude Code
-CLAUDE.md
 .claude/
