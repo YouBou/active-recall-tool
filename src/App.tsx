@@ -49,7 +49,11 @@ function App() {
           </NavLink>
         </nav>
         <div className="header-actions">
-          <button className="theme-toggle" onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}>
+          <button
+            className="theme-toggle"
+            onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}
+            aria-label={theme === 'light' ? 'ダークテーマに切り替え' : 'ライトテーマに切り替え'}
+          >
             {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
           </button>
         </div>
