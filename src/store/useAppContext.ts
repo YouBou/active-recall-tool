@@ -3,6 +3,9 @@ import type { AppData, Card, Deck, StudySession, Rating } from '../types';
 
 export interface AppContextType {
   data: AppData;
+  isLoading: boolean;
+  error: string | null;
+  clearError: () => void;
   addDeck: (name: string, description: string, category: string) => Deck;
   updateDeck: (deck: Deck) => void;
   deleteDeck: (id: string) => void;

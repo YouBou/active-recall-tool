@@ -3,7 +3,8 @@ import { useAppContext } from '../store/useAppContext';
 import { getMasteryLevel } from '../utils/spaced-repetition';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Download, Upload } from 'lucide-react';
-import { exportData, importData } from '../utils/storage';
+import { exportData, importData, bulkInsertSeedData } from '../utils/storage';
+import { useAuth } from '../store/useAuth';
 
 const MASTERY_COLORS = {
   new: '#ef4444',
@@ -21,6 +22,7 @@ const MASTERY_LABELS: Record<string, string> = {
 
 export default function StatsPage() {
   const { data, setData } = useAppContext();
+  const { user } = useAuth();
 
   const totalCards = data.cards.length;
   const totalDecks = data.decks.length;
@@ -93,7 +95,7 @@ export default function StatsPage() {
   const totalCardsStudied = data.sessions.reduce((sum, s) => sum + s.cardsStudied, 0);
 
   const handleExport = () => {
-    const json = exportData();
+    const json = exportData(data);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -115,6 +117,7 @@ export default function StatsPage() {
         try {
           const imported = importData(ev.target?.result as string);
           setData(imported);
+          if (user) void bulkInsertSeedData(imported, user.id);
         } catch {
           alert('無効なファイル形式です');
         }
