@@ -1,10 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, NavLink, useLocation } from 'react-router-dom';
+import { Routes, Route, NavLink, useLocation, useParams } from 'react-router-dom';
 import { Brain, Layers, BarChart3, Sun, Moon } from 'lucide-react';
 import DecksPage from './pages/DecksPage';
 import DeckDetailPage from './pages/DeckDetailPage';
 import StudyPage from './pages/StudyPage';
 import StatsPage from './pages/StatsPage';
+
+// Wrapper that forces StudyPage remount on deckId change, resetting all session state
+function StudyPageWithKey() {
+  const { deckId } = useParams<{ deckId: string }>();
+  return <StudyPage key={deckId} />;
+}
 
 function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -24,7 +30,7 @@ function App() {
       <div className="app">
         <div className="main-content">
           <Routes>
-            <Route path="/study/:deckId" element={<StudyPage />} />
+            <Route path="/study/:deckId" element={<StudyPageWithKey />} />
           </Routes>
         </div>
       </div>
