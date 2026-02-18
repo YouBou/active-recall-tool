@@ -1,7 +1,7 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Play, Pencil, Trash2, Code, Type, Image, ListChecks, Eye } from 'lucide-react';
-import { useAppContext } from '../store/AppContext';
+import { useAppContext } from '../store/useAppContext';
 import { getDueCards, getMasteryLevel } from '../utils/spaced-repetition';
 import type { Card, CardType, MultipleChoiceOption } from '../types';
 import { generateId } from '../utils/id';
@@ -56,10 +56,6 @@ function CardFormModal({ card, deckId, onClose, onSave }: {
   );
   const [showPreview, setShowPreview] = useState(false);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    setError('');
-  }, [type]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -152,7 +148,7 @@ function CardFormModal({ card, deckId, onClose, onSave }: {
                 {(['text', 'code', 'image', 'multiple-choice'] as CardType[]).map((t) => {
                   const Icon = cardTypeIcons[t];
                   return (
-                    <button key={t} type="button" className={`tab ${type === t ? 'active' : ''}`} onClick={() => setType(t)}>
+                    <button key={t} type="button" className={`tab ${type === t ? 'active' : ''}`} onClick={() => { setType(t); setError(''); }}>
                       <Icon size={14} style={{ marginRight: '4px' }} />
                       {cardTypeLabels[t]}
                     </button>

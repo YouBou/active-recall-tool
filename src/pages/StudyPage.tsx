@@ -1,7 +1,7 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Check } from 'lucide-react';
-import { useAppContext } from '../store/AppContext';
+import { useAppContext } from '../store/useAppContext';
 import { getDueCards } from '../utils/spaced-repetition';
 import type { Card, Rating, StudySession } from '../types';
 import ReactMarkdown from 'react-markdown';
@@ -84,10 +84,10 @@ export default function StudyPage() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
-  const [session, setSession] = useState<StudySession | null>(null);
+  const sessionRef = useRef<StudySession | null>(null);
   const [studiedIds, setStudiedIds] = useState<Set<string>>(new Set());
   const [ratings, setRatings] = useState({ forgot: 0, hard: 0, good: 0 });
-  const [sessionCardIds, setSessionCardIds] = useState<string[]>([]);
+  const [sessionCardIds] = useState<string[]>(() => dueCards.map((c) => c.id));
 
   // Frozen snapshot of cards for this session to prevent skipping due to re-computation
   const activeCards = useMemo(
@@ -101,14 +101,12 @@ export default function StudyPage() {
   const currentCard: Card | undefined = activeCards[currentIndex];
   const isComplete = currentIndex >= totalCards;
 
-  // Start session on first render using useEffect to avoid setState during render
+  // Start session once when component mounts
   useEffect(() => {
-    if (!session && deckId && dueCards.length > 0) {
-      const s = startSession(deckId);
-      setSession(s);
-      setSessionCardIds(dueCards.map((c) => c.id));
+    if (!sessionRef.current && deckId && sessionCardIds.length > 0) {
+      sessionRef.current = startSession(deckId);
     }
-  }, [session, deckId, dueCards, startSession]);
+  }, [deckId, sessionCardIds, startSession]);
 
   const handleRate = useCallback((rating: Rating) => {
     if (!currentCard) return;
@@ -121,14 +119,14 @@ export default function StudyPage() {
     const nextIndex = currentIndex + 1;
     setCurrentIndex(nextIndex);
 
-    if (nextIndex >= totalCards && session) {
+    if (nextIndex >= totalCards && sessionRef.current) {
       endSession({
-        ...session,
+        ...sessionRef.current,
         cardsStudied: studiedIds.size + 1,
         ratings: { ...ratings, [rating]: ratings[rating] + 1 },
       });
     }
-  }, [currentCard, currentIndex, totalCards, session, studiedIds, ratings, rateCard, endSession]);
+  }, [currentCard, currentIndex, totalCards, studiedIds, ratings, rateCard, endSession]);
 
   if (!deck) {
     return (

@@ -1,9 +1,10 @@
-import { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
+import { useReducer, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type { AppData, Card, Deck, StudySession, Rating } from '../types';
 import { loadData, saveData } from '../utils/storage';
 import { calculateNextReview } from '../utils/spaced-repetition';
 import { generateId } from '../utils/id';
+import { AppContext } from './useAppContext';
 
 type Action =
   | { type: 'SET_DATA'; payload: AppData }
@@ -55,22 +56,6 @@ function reducer(state: AppData, action: Action): AppData {
       return state;
   }
 }
-
-interface AppContextType {
-  data: AppData;
-  addDeck: (name: string, description: string, category: string) => Deck;
-  updateDeck: (deck: Deck) => void;
-  deleteDeck: (id: string) => void;
-  addCard: (card: Omit<Card, 'id' | 'interval' | 'easeFactor' | 'repetitions' | 'nextReview' | 'lastReview' | 'createdAt' | 'updatedAt'>) => Card;
-  updateCard: (card: Card) => void;
-  deleteCard: (id: string) => void;
-  rateCard: (cardId: string, rating: Rating) => void;
-  startSession: (deckId: string) => StudySession;
-  endSession: (session: StudySession) => void;
-  setData: (data: AppData) => void;
-}
-
-const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [data, dispatch] = useReducer(reducer, null, loadData);
@@ -149,10 +134,4 @@ export function AppProvider({ children }: { children: ReactNode }) {
       {children}
     </AppContext.Provider>
   );
-}
-
-export function useAppContext() {
-  const ctx = useContext(AppContext);
-  if (!ctx) throw new Error('useAppContext must be used within AppProvider');
-  return ctx;
 }
