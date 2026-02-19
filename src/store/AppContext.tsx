@@ -88,12 +88,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
     dispatch({ type: 'SET_LOADING', payload: true });
     fetchAllData(user.id)
-      .then((data) => {
+      .then(async (data) => {
         const isEmpty = data.decks.length === 0 && data.cards.length === 0;
         if (isEmpty) {
           const seed = generateSeedData();
           dispatch({ type: 'SET_DATA', payload: seed });
-          void bulkInsertSeedData(seed, user.id);
+          try {
+            await bulkInsertSeedData(seed, user.id);
+          } catch {
+            dispatch({ type: 'SET_DATA', payload: EMPTY_DATA });
+            dispatch({ type: 'SET_ERROR', payload: 'シードデータの保存に失敗しました' });
+          }
         } else {
           dispatch({ type: 'SET_DATA', payload: data });
         }
@@ -142,7 +147,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const prevCards = state.cards.filter((c) => c.deckId === id);
     dispatch({ type: 'DELETE_DECK', payload: id });
     if (user) {
-      void removeDeck(id).catch(() => {
+      void removeDeck(id, user.id).catch(() => {
         if (prevDeck) dispatch({ type: 'ADD_DECK', payload: prevDeck });
         prevCards.forEach((c) => dispatch({ type: 'ADD_CARD', payload: c }));
         dispatch({ type: 'SET_ERROR', payload: 'デッキの削除に失敗しました' });
@@ -191,7 +196,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const prev = state.cards.find((c) => c.id === id);
     dispatch({ type: 'DELETE_CARD', payload: id });
     if (user) {
-      void removeCard(id).catch(() => {
+      void removeCard(id, user.id).catch(() => {
         if (prev) dispatch({ type: 'ADD_CARD', payload: prev });
         dispatch({ type: 'SET_ERROR', payload: 'カードの削除に失敗しました' });
       });
@@ -224,7 +229,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
     dispatch({ type: 'ADD_SESSION', payload: session });
     if (user) {
-      void upsertSession(session, user.id);
+      void upsertSession(session, user.id).catch(() => {
+        dispatch({ type: 'SET_ERROR', payload: 'セッションの開始に失敗しました' });
+      });
     }
     return session;
   }, [user]);
@@ -233,7 +240,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const ended = { ...session, endedAt: new Date().toISOString() };
     dispatch({ type: 'UPDATE_SESSION', payload: ended });
     if (user) {
-      void upsertSession(ended, user.id);
+      void upsertSession(ended, user.id).catch(() => {
+        dispatch({ type: 'SET_ERROR', payload: 'セッションの終了に失敗しました' });
+      });
     }
   }, [user]);
 

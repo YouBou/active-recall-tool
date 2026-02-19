@@ -41,8 +41,8 @@ export async function upsertDeck(deck: Deck, userId: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function removeDeck(deckId: string): Promise<void> {
-  const { error } = await supabase.from('decks').delete().eq('id', deckId);
+export async function removeDeck(deckId: string, userId: string): Promise<void> {
+  const { error } = await supabase.from('decks').delete().eq('id', deckId).eq('user_id', userId);
   if (error) throw error;
 }
 
@@ -51,8 +51,8 @@ export async function upsertCard(card: Card, userId: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function removeCard(cardId: string): Promise<void> {
-  const { error } = await supabase.from('cards').delete().eq('id', cardId);
+export async function removeCard(cardId: string, userId: string): Promise<void> {
+  const { error } = await supabase.from('cards').delete().eq('id', cardId).eq('user_id', userId);
   if (error) throw error;
 }
 
@@ -66,6 +66,7 @@ export async function upsertSession(session: StudySession, userId: string): Prom
 export async function bulkInsertSeedData(data: AppData, userId: string): Promise<void> {
   const deckRows = data.decks.map((d) => deckToRow(d, userId));
   const cardRows = data.cards.map((c) => cardToRow(c, userId));
+  const sessionRows = data.sessions.map((s) => sessionToRow(s, userId));
 
   if (deckRows.length > 0) {
     const { error } = await supabase.from('decks').upsert(deckRows);
@@ -73,6 +74,10 @@ export async function bulkInsertSeedData(data: AppData, userId: string): Promise
   }
   if (cardRows.length > 0) {
     const { error } = await supabase.from('cards').upsert(cardRows);
+    if (error) throw error;
+  }
+  if (sessionRows.length > 0) {
+    const { error } = await supabase.from('study_sessions').upsert(sessionRows);
     if (error) throw error;
   }
 }

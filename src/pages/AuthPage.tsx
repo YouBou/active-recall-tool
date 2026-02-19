@@ -16,16 +16,18 @@ export default function AuthPage() {
     setError(null);
     setIsSubmitting(true);
 
-    if (mode === 'login') {
-      const { error: err } = await signIn(email, password);
-      if (err) setError(err);
-    } else {
-      const { error: err, emailSent: sent } = await signUp(email, password);
-      if (err) setError(err);
-      else if (sent) setEmailSent(true);
+    try {
+      if (mode === 'login') {
+        const { error: err } = await signIn(email, password);
+        if (err) setError(err);
+      } else {
+        const { error: err, emailSent: sent } = await signUp(email, password);
+        if (err) setError(err);
+        else if (sent) setEmailSent(true);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setIsSubmitting(false);
   };
 
   const switchMode = () => {

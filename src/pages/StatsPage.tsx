@@ -117,7 +117,11 @@ export default function StatsPage() {
         try {
           const imported = importData(ev.target?.result as string);
           setData(imported);
-          if (user) void bulkInsertSeedData(imported, user.id);
+          if (user) {
+            bulkInsertSeedData(imported, user.id).catch(() => {
+              alert('データの保存に失敗しました。再度インポートしてください。');
+            });
+          }
         } catch {
           alert('無効なファイル形式です');
         }
